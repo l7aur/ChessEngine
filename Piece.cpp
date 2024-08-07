@@ -8,3 +8,9 @@ bool Piece::isValidMove()
         return false;
     return true;
 }
+
+Piece::~Piece()
+{
+    UnloadTexture(sprite);
+    allowedmoves.clear();
+}
