@@ -4,16 +4,18 @@
 Pawn::Pawn(Vector2 pos, bool color)
 {
     position = pos;
+    if(!this->isInsideBoard())
+        throw std::invalid_argument("received wrong value for position!");
     if (color == WHITE_PLAYER)
     {
-        // sprite = LoadTexture();
+        sprite = LoadTexture("Sprites\\white_pawn.png");
         this->allowedmoves.push_back({0, -1});
         this->allowedmoves.push_back({1, -1});
         this->allowedmoves.push_back({-1, -1});
     }
     else
     {
-        // sprite = LoadTexture();
+        sprite = LoadTexture("Sprites\\black_pawn.png");
         this->allowedmoves.push_back({0, 1});
         this->allowedmoves.push_back({1, 1});
         this->allowedmoves.push_back({-1, 1});
