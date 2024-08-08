@@ -20,3 +20,12 @@ void ChessBoard::drawChessBoard(Color firstColor, Color secondColor)
             DrawRectangle(board[i][j].position.x, board[i][j].position.y, board[i][j].position.width, board[i][j].position.height, color);
         }
 }
+
+BoardPlace ChessBoard::at(int i, int j)
+{
+    if(i < 0 || i > 7)
+        return BoardPlace();
+    if(j < 0 || j > 7)
+        return BoardPlace();
+    return this->board[i][j];
+}

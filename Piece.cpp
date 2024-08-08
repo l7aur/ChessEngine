@@ -1,12 +1,13 @@
 #include "Piece.h"
-#include <algorithm>
+#include "raymath.h"
 
 bool Piece::isValidMove()
 {
     Vector2 myMove{}; //compute myMove
-    if(std::find(allowedmoves.begin(), allowedmoves.end(), myMove) == allowedmoves.end())
-        return false;
-    return true;
+    for(auto it: this->allowedmoves)
+        if(Vector2Equals(it, myMove))
+            return true;
+    return false;
 }
 
 Piece::~Piece()

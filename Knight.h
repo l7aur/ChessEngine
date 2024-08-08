@@ -6,6 +6,7 @@
 class Knight: public Piece {
 public:
     Knight(Vector2 pos, bool color);
+    virtual void draw(BoardPlace place) override;
 };
 
 #endif

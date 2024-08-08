@@ -3,7 +3,8 @@
 
 #include "Piece.h"
 
-class Pawn : public Piece {
+class Pawn : public Piece
+{
 public:
     Pawn(Vector2 pos, bool color);
 };
