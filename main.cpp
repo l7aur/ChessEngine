@@ -6,6 +6,8 @@
 #include "Bishop.h"
 #include "Pawn.h"
 
+#include <iostream>
+
 struct PlayerSet
 {
     PLAYER_COLORS color;
@@ -45,8 +47,18 @@ struct PlayerSet
         rook[0]->draw(), rook[1]->draw();
         knight[0]->draw(), knight[1]->draw();
         bishop[0]->draw(), bishop[1]->draw();
-        for(int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
             pawn[i]->draw();
+    }
+    void clear()
+    {
+        delete king;
+        delete queen;
+        delete rook[0], delete rook[1];
+        delete bishop[0], delete bishop[1];
+        delete knight[0], delete knight[1];
+        for (int i = 0; i < 8; i++)
+            delete pawn[i];
     }
 };
 
@@ -68,11 +80,21 @@ int main()
 
         whiteSet->drawSet();
         blackSet->drawSet();
+        Vector2 mousePostion = GetMousePosition();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            int posX = mousePostion.y / SQUARE_SIZE;
+            int posY = mousePostion.x / SQUARE_SIZE;
+            std::cout << posX << ' ' << posY << '\n';
+        }
 
         EndDrawing();
     }
 
     delete chessBoard;
-    
+    whiteSet->clear();
+    blackSet->clear();
+    delete whiteSet;
+    delete blackSet;
     return 0;
 }
