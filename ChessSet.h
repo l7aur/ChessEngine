@@ -15,8 +15,8 @@ class ChessSet
 {
 public:
     ChessSet(PLAYER_COLORS color);
-    void draw();
-    Piece * findPieceByPosition(Vector2 place);
+    void draw() const;
+    Piece * findPieceByPosition(Vector2 place) const;
     ~ChessSet();
 private:
     std::vector<Piece*> pieces;

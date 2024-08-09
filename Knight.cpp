@@ -8,6 +8,7 @@ Knight::Knight(Vector2 pos, bool color)
     this->allowedmoves.push_back({2, -1});
     this->allowedmoves.push_back({-2, 1});
     this->allowedmoves.push_back({-2, -1});
+    this->allowedmoves.push_back({2, 1});
     this->allowedmoves.push_back({1, 2});
     this->allowedmoves.push_back({1, -2});
     this->allowedmoves.push_back({-1, 2});

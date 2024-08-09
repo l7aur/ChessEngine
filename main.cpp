@@ -17,7 +17,8 @@ int main()
     Piece *chosenPiece;
     bool pieceSelected = false;
     bool turn = WHITE_PLAYER;
-
+    
+    SetTargetFPS(30);
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -27,11 +28,10 @@ int main()
         whiteSet->draw();
         blackSet->draw();
         Vector2 mousePostion = GetMousePosition();
-        int squareX = mousePostion.y / SQUARE_SIZE;
-        int squareY = mousePostion.x / SQUARE_SIZE;
+        int squareX = mousePostion.x / SQUARE_SIZE;
+        int squareY = mousePostion.y / SQUARE_SIZE;
         Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
-
-        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             ChessSet *currentSet = (turn) ? blackSet : whiteSet;
             if (!pieceSelected)
@@ -39,13 +39,14 @@ int main()
             if (chosenPiece != nullptr)
             {
                 chosenPiece->draw(chosenPiece->computeBoardPosition(mousePostion, boardPosition));
+                chosenPiece->highlightAllowedMoves(chessBoard);
                 pieceSelected = true;
                 chosenPiece->toBeDrawn = false;
             }
             else
                 std::cout << "\nNo piece detected!\n";
         }
-        if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
+        if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             if(!Vector2Equals(boardPosition, chosenPiece->getPosition()))
                 turn = !turn;

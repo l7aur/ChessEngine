@@ -1,25 +1,16 @@
 #include "Piece.h"
 #include "raymath.h"
 
-bool Piece::isInsideBoard()
+bool Piece::isInsideBoard() const
 {
-    if(position.x < 0 || position.x > 7)
+    if (position.x < 0 || position.x > 7)
         return false;
-    if(position.y < 0 || position.y > 7)
+    if (position.y < 0 || position.y > 7)
         return false;
     return true;
 }
 
-bool Piece::isValidMove()
-{
-    Vector2 myMove{}; //compute myMove
-    for(auto it: this->allowedmoves)
-        if(Vector2Equals(it, myMove))
-            return true;
-    return false;
-}
-
-void Piece::draw(Rectangle placePosition)
+void Piece::draw(Rectangle placePosition) const
 {
     Rectangle spriteRec{0, 0, static_cast<float>(this->sprite.width), static_cast<float>(this->sprite.height)};
     DrawTexturePro(this->sprite, spriteRec, placePosition, {}, 0.0f, WHITE);
@@ -31,22 +22,31 @@ Piece::~Piece()
     allowedmoves.clear();
 }
 
-Rectangle Piece::computeBoardPosition()
+Rectangle Piece::computeBoardPosition() const
 {
     Rectangle r{};
-    r.x = this->position.y * SQUARE_SIZE + PADDING;
-    r.y = this->position.x * SQUARE_SIZE + PADDING;
+    r.y = this->position.y * SQUARE_SIZE + PADDING;
+    r.x = this->position.x * SQUARE_SIZE + PADDING;
     r.width = r.height = SQUARE_SIZE - 2 * PADDING;
     return r;
 }
 
-Rectangle Piece::computeBoardPosition(Vector2 mouse, Vector2 board)
+void Piece::highlightAllowedMoves(ChessBoard *board) const
+{
+    for (Vector2 allowedM : this->allowedmoves)
+    {
+        Vector2 pos = Vector2Scale(Vector2Add(this->position, allowedM), SQUARE_SIZE);
+        DrawRectangle(pos.x, pos.y, SQUARE_SIZE, SQUARE_SIZE, Color{150, 0, 0, 220});
+    }
+}
+
+Rectangle Piece::computeBoardPosition(Vector2 mouse, Vector2 board) const
 {
     Rectangle r{};
-    Vector2 boardVect = Vector2Scale(board, 100);
+    Vector2 boardVect = Vector2Scale(board, SQUARE_SIZE);
     Vector2 displacement = Vector2Subtract(mouse, boardVect);
-    r.y = mouse.x - displacement.x + PADDING;
-    r.x = mouse.y - displacement.y + PADDING;
+    r.y = mouse.y - displacement.y + PADDING;
+    r.x = mouse.x - displacement.x + PADDING;
     r.height = r.width = SQUARE_SIZE - 2 * PADDING;
     return r;
 }
