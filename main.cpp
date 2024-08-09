@@ -9,6 +9,7 @@ void highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSe
 
 int main()
 {
+    const Vector2 LOST_PIECE_POSITION{100, 100};
     InitWindow(WINDOW_SIZE, WINDOW_SIZE, "CHESS ENGINE");
 
     ChessBoard *chessBoard = new ChessBoard(static_cast<float>(WINDOW_SIZE));
@@ -32,10 +33,10 @@ int main()
         int squareX = mousePostion.x / SQUARE_SIZE;
         int squareY = mousePostion.y / SQUARE_SIZE;
         Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-        {
             ChessSet *currentSet = (turn) ? blackSet : whiteSet;
             ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+        {
             if (!pieceSelected)
                 chosenPiece = currentSet->findPieceByPosition(boardPosition);
             if (chosenPiece != nullptr)
@@ -50,10 +51,15 @@ int main()
         }
         if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (!Vector2Equals(boardPosition, chosenPiece->getPosition()))
+            if (!Vector2Equals(boardPosition, chosenPiece->getPosition()) && 
+            nullptr == currentSet->findPieceByPosition(boardPosition))
             {
+                Piece * p = opposingSet->findPieceByPosition(boardPosition);
+                if(p != nullptr)
+                    p->setPosition(LOST_PIECE_POSITION);
+
                 turn = !turn;
-                chosenPiece->updatePreviousPosition();
+                // chosenPiece->updatePreviousPosition();
                 chosenPiece->setPosition(boardPosition);
             }
             chosenPiece->toBeDrawn = true;
