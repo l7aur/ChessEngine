@@ -4,7 +4,7 @@ King::King(Vector2 pos, bool color)
 {
     this->position = pos;
     if(!this->isInsideBoard())
-        throw std::invalid_argument("received wrong value for position!");
+        throw std::invalid_argument("\nKING\nReceived wrong value for position!\n");
     this->allowedmoves.push_back({0, 1});
     this->allowedmoves.push_back({0, -1});
     this->allowedmoves.push_back({1, 1});

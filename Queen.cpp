@@ -4,7 +4,7 @@ Queen::Queen(Vector2 pos, bool color)
 {
     this->position = pos;
     if(!this->isInsideBoard())
-        throw std::invalid_argument("received wrong value for position!");
+        throw std::invalid_argument("\nQUEEN\nReceived wrong value for position!\n");
     for(int i = 1; i < 8; i++) {
         this->allowedmoves.push_back({static_cast<float>(i), static_cast<float>(i)});
         this->allowedmoves.push_back({static_cast<float>(i), static_cast<float>(-i)});

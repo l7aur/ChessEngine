@@ -5,7 +5,7 @@ Pawn::Pawn(Vector2 pos, bool color)
 {
     position = pos;
     if(!this->isInsideBoard())
-        throw std::invalid_argument("received wrong value for position!");
+        throw std::invalid_argument("\nPAWN\nReceived wrong value for position!\n");
     if (color == WHITE_PLAYER)
     {
         sprite = LoadTexture("Sprites\\white_pawn.png");

@@ -31,11 +31,22 @@ Piece::~Piece()
     allowedmoves.clear();
 }
 
-Rectangle Piece::computeBordPosition()
+Rectangle Piece::computeBoardPosition()
 {
     Rectangle r{};
     r.x = this->position.y * SQUARE_SIZE + PADDING;
     r.y = this->position.x * SQUARE_SIZE + PADDING;
     r.width = r.height = SQUARE_SIZE - 2 * PADDING;
+    return r;
+}
+
+Rectangle Piece::computeBoardPosition(Vector2 mouse, Vector2 board)
+{
+    Rectangle r{};
+    Vector2 boardVect = Vector2Scale(board, 100);
+    Vector2 displacement = Vector2Subtract(mouse, boardVect);
+    r.y = mouse.x - displacement.x + PADDING;
+    r.x = mouse.y - displacement.y + PADDING;
+    r.height = r.width = SQUARE_SIZE - 2 * PADDING;
     return r;
 }

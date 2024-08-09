@@ -5,7 +5,7 @@ Rook::Rook(Vector2 pos, bool color)
 {
     position = pos;
     if(!this->isInsideBoard())
-        throw std::invalid_argument("received wrong value for position!");
+        throw std::invalid_argument("\nROOK\nreceived wrong value for position!\n");
     for (int i = 1; i < 8; i++)
         this->allowedmoves.push_back({0, -static_cast<float>(i)});
     for (int i = 1; i < 8; i++)

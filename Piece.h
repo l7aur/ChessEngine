@@ -12,7 +12,8 @@ public:
     bool isInsideBoard(); // todo
     bool isValidMove();   // todo
     void draw(Rectangle boardPosition);
-    Rectangle computeBordPosition();
+    Rectangle computeBoardPosition();
+    Rectangle computeBoardPosition(Vector2 mouse, Vector2 board);
     inline Vector2 getPosition() { return this->position; };
     inline void setPosition(Vector2 newPos) { this->position = newPos; };
     ~Piece();

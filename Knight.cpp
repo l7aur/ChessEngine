@@ -4,7 +4,7 @@ Knight::Knight(Vector2 pos, bool color)
 {
     this->position = pos;
     if(!this->isInsideBoard())
-        throw std::invalid_argument("received wrong value for position!");
+        throw std::invalid_argument("\nKNIGHT\nReceived wrong value for position!\n");
     this->allowedmoves.push_back({2, -1});
     this->allowedmoves.push_back({-2, 1});
     this->allowedmoves.push_back({-2, -1});
