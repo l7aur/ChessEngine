@@ -19,11 +19,10 @@ bool Piece::isValidMove()
     return false;
 }
 
-void Piece::draw()
+void Piece::draw(Rectangle placePosition)
 {
-    Rectangle placePostion = this->computeBordPosition();
     Rectangle spriteRec{0, 0, static_cast<float>(this->sprite.width), static_cast<float>(this->sprite.height)};
-    DrawTexturePro(this->sprite, spriteRec, placePostion, {}, 0.0f, WHITE);
+    DrawTexturePro(this->sprite, spriteRec, placePosition, {}, 0.0f, WHITE);
 }
 
 Piece::~Piece()

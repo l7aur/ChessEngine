@@ -6,6 +6,7 @@
 
 const int WINDOW_SIZE = 800;
 const int SQUARE_SIZE = WINDOW_SIZE / 8;
+const int SPRITE_SIZE = 32;
 const int PADDING = 5;
 
 enum PLAYER_COLORS { //no more than 2

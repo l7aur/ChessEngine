@@ -6,6 +6,8 @@
 #include "Bishop.h"
 #include "Pawn.h"
 
+#include "raymath.h"
+
 #include <iostream>
 
 struct PlayerSet
@@ -42,13 +44,42 @@ struct PlayerSet
     }
     void drawSet()
     {
-        king->draw();
-        queen->draw();
-        rook[0]->draw(), rook[1]->draw();
-        knight[0]->draw(), knight[1]->draw();
-        bishop[0]->draw(), bishop[1]->draw();
+        if (king->toBeDrawn)
+            king->draw(king->computeBordPosition());
+        if (queen->toBeDrawn)
+            queen->draw(queen->computeBordPosition());
+        for (int i = 0; i < 2; i++)
+            if (rook[i]->toBeDrawn)
+                rook[i]->draw(rook[i]->computeBordPosition());
+        for (int i = 0; i < 2; i++)
+            if (knight[i]->toBeDrawn)
+                knight[i]->draw(knight[i]->computeBordPosition());
+        for (int i = 0; i < 2; i++)
+            if (bishop[i]->toBeDrawn)
+                bishop[i]->draw(bishop[i]->computeBordPosition());
         for (int i = 0; i < 8; i++)
-            pawn[i]->draw();
+            if (pawn[i]->toBeDrawn)
+                pawn[i]->draw(pawn[i]->computeBordPosition());
+    }
+    Piece *loopThrough(Vector2 pos)
+    {
+        if (Vector2Equals(king->getPosition(), pos))
+            return king;
+        if (Vector2Equals(queen->getPosition(), pos))
+            return queen;
+        for (int i = 0; i < 2; i++)
+            if (Vector2Equals(rook[i]->getPosition(), pos))
+                return rook[i];
+        for (int i = 0; i < 2; i++)
+            if (Vector2Equals(knight[i]->getPosition(), pos))
+                return knight[i];
+        for (int i = 0; i < 2; i++)
+            if (Vector2Equals(bishop[i]->getPosition(), pos))
+                return bishop[i];
+        for (int i = 0; i < 8; i++)
+            if (Vector2Equals(pawn[i]->getPosition(), pos))
+                return pawn[i];
+        return nullptr;
     }
     void clear()
     {
@@ -62,6 +93,17 @@ struct PlayerSet
     }
 };
 
+Rectangle computeRectangle(Vector2 mouse, Vector2 board)
+{
+    Rectangle r;
+    Vector2 boardVect = Vector2Scale(board, 100);
+    Vector2 displacement = Vector2Subtract(mouse, boardVect);
+    r.y = mouse.x - displacement.x + PADDING;
+    r.x = mouse.y - displacement.y + PADDING;
+    r.height = r.width = SQUARE_SIZE - 2 * PADDING;
+    return r;
+}
+
 int main()
 {
     const Color COLORS[2] = {{0, 0, 0, 255}, {216, 202, 176, 255}};
@@ -71,6 +113,9 @@ int main()
     ChessBoard *chessBoard = new ChessBoard(static_cast<float>(WINDOW_SIZE));
     PlayerSet *whiteSet = new PlayerSet(WHITE_PLAYER);
     PlayerSet *blackSet = new PlayerSet(BLACK_PLAYER);
+    Piece *chosenPiece;
+    bool pieceSelected = false;
+    bool turn = WHITE_PLAYER;
 
     while (!WindowShouldClose())
     {
@@ -81,13 +126,32 @@ int main()
         whiteSet->drawSet();
         blackSet->drawSet();
         Vector2 mousePostion = GetMousePosition();
-        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-        {
-            int posX = mousePostion.y / SQUARE_SIZE;
-            int posY = mousePostion.x / SQUARE_SIZE;
-            std::cout << posX << ' ' << posY << '\n';
-        }
+        int squareX = mousePostion.y / SQUARE_SIZE;
+        int squareY = mousePostion.x / SQUARE_SIZE;
+        Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
 
+        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+        {
+            PlayerSet *currentSet = (turn) ? blackSet : whiteSet;
+            if (!pieceSelected)
+                chosenPiece = currentSet->loopThrough(boardPosition);
+            if (chosenPiece != nullptr)
+            {
+                chosenPiece->draw(computeRectangle(mousePostion, boardPosition));
+                pieceSelected = true;
+                chosenPiece->toBeDrawn = false;
+            }
+            else
+                std::cout << "no piece detected!\n";
+        }
+        if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
+        {
+            if(!Vector2Equals(boardPosition, chosenPiece->getPosition()))
+                turn = !turn;
+            chosenPiece->setPosition(boardPosition);
+            chosenPiece->toBeDrawn = true;
+            pieceSelected = false;
+        }
         EndDrawing();
     }
 

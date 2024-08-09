@@ -11,15 +11,18 @@ class Piece
 public:
     bool isInsideBoard(); // todo
     bool isValidMove();   // todo
-    void draw();
+    void draw(Rectangle boardPosition);
+    Rectangle computeBordPosition();
+    inline Vector2 getPosition() { return this->position; };
+    inline void setPosition(Vector2 newPos) { this->position = newPos; };
     ~Piece();
+    bool toBeDrawn{true};
 protected:
     Texture2D sprite{};
     Vector2 position{};
     std::vector<Vector2> allowedmoves{};
     bool color{};
 private:
-    Rectangle computeBordPosition();
 };
 
 #endif
