@@ -5,19 +5,20 @@
 
 #include <iostream>
 
+void highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece);
+
 int main()
 {
-    const Color COLORS[2] = {{0, 0, 0, 255}, {216, 202, 176, 255}};
-
     InitWindow(WINDOW_SIZE, WINDOW_SIZE, "CHESS ENGINE");
 
     ChessBoard *chessBoard = new ChessBoard(static_cast<float>(WINDOW_SIZE));
-    ChessSet * whiteSet = new ChessSet(WHITE_PLAYER);
-    ChessSet * blackSet = new ChessSet(BLACK_PLAYER);
+    ChessSet *whiteSet = new ChessSet(WHITE_PLAYER);
+    ChessSet *blackSet = new ChessSet(BLACK_PLAYER);
+
     Piece *chosenPiece;
     bool pieceSelected = false;
     bool turn = WHITE_PLAYER;
-    
+
     SetTargetFPS(30);
     while (!WindowShouldClose())
     {
@@ -34,12 +35,13 @@ int main()
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             ChessSet *currentSet = (turn) ? blackSet : whiteSet;
+            ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
             if (!pieceSelected)
                 chosenPiece = currentSet->findPieceByPosition(boardPosition);
             if (chosenPiece != nullptr)
             {
                 chosenPiece->draw(chosenPiece->computeBoardPosition(mousePostion, boardPosition));
-                chosenPiece->highlightAllowedMoves(chessBoard);
+                highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece);
                 pieceSelected = true;
                 chosenPiece->toBeDrawn = false;
             }
@@ -48,9 +50,12 @@ int main()
         }
         if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if(!Vector2Equals(boardPosition, chosenPiece->getPosition()))
+            if (!Vector2Equals(boardPosition, chosenPiece->getPosition()))
+            {
                 turn = !turn;
-            chosenPiece->setPosition(boardPosition);
+                chosenPiece->updatePreviousPosition();
+                chosenPiece->setPosition(boardPosition);
+            }
             chosenPiece->toBeDrawn = true;
             pieceSelected = false;
         }
@@ -61,4 +66,22 @@ int main()
     delete whiteSet;
     delete blackSet;
     return 0;
+}
+
+void highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
+{
+    for (Vector2 allowedM : chosenPiece->getMoves())
+    {
+        Vector2 boardPos = Vector2Add(chosenPiece->getPosition(), allowedM);
+        Vector2 pixelPos = Vector2Scale(boardPos, SQUARE_SIZE);
+        Piece *inTargetPos = opposingSet->findPieceByPosition(boardPos);
+        if (inTargetPos != nullptr)
+            DrawRectangle(pixelPos.x, pixelPos.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_ATTACK);
+        else
+        {
+            inTargetPos = currentSet->findPieceByPosition(boardPos);
+            if (inTargetPos == nullptr)
+                DrawRectangle(pixelPos.x, pixelPos.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_EMPTY);
+        }
+    }
 }

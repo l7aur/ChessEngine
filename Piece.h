@@ -18,7 +18,7 @@ public:
     inline void setPosition(Vector2 newPos) { this->position = newPos; };
     inline Vector2 getPreviousPosition() const { return this->previousPosition; };
     inline void updatePreviousPosition() { this->previousPosition = position; };
-    void highlightAllowedMoves(ChessBoard *board) const;
+    inline std::vector<Vector2> getMoves() const { return this->moves; };
     ~Piece();
 
     bool toBeDrawn{true};
@@ -27,9 +27,7 @@ protected:
     Texture2D sprite{};
     Vector2 previousPosition{};
     Vector2 position{};
-    std::vector<Vector2> allowedmoves{};
-    bool color{};
-
+    std::vector<Vector2> moves{};
 private:
 };
 

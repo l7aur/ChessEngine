@@ -14,7 +14,7 @@ ChessSet::ChessSet(PLAYER_COLORS color)
     this->pieces.push_back(new Bishop({2, static_cast<float>(line)}, color));
     this->pieces.push_back(new Bishop({5, static_cast<float>(line)}, color));
     for (int i = 0; i < 8; i++)
-        this->pieces.push_back(new Pawn({static_cast<float>(i), static_cast<float>(reflect + line)}, color));
+        this->pieces.push_back(new Pawn({static_cast<float>(i), static_cast<float>(reflect + line),}, color));
 
     
 }

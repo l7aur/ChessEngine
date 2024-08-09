@@ -19,7 +19,7 @@ void Piece::draw(Rectangle placePosition) const
 Piece::~Piece()
 {
     UnloadTexture(sprite);
-    allowedmoves.clear();
+    moves.clear();
 }
 
 Rectangle Piece::computeBoardPosition() const
@@ -29,15 +29,6 @@ Rectangle Piece::computeBoardPosition() const
     r.x = this->position.x * SQUARE_SIZE + PADDING;
     r.width = r.height = SQUARE_SIZE - 2 * PADDING;
     return r;
-}
-
-void Piece::highlightAllowedMoves(ChessBoard *board) const
-{
-    for (Vector2 allowedM : this->allowedmoves)
-    {
-        Vector2 pos = Vector2Scale(Vector2Add(this->position, allowedM), SQUARE_SIZE);
-        DrawRectangle(pos.x, pos.y, SQUARE_SIZE, SQUARE_SIZE, Color{150, 0, 0, 220});
-    }
 }
 
 Rectangle Piece::computeBoardPosition(Vector2 mouse, Vector2 board) const

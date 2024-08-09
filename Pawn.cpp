@@ -9,15 +9,15 @@ Pawn::Pawn(Vector2 pos, bool color)
     if (color == WHITE_PLAYER)
     {
         sprite = LoadTexture("Sprites\\white_pawn.png");
-        this->allowedmoves.push_back({0, -1});
-        this->allowedmoves.push_back({1, -1});
-        this->allowedmoves.push_back({-1, -1});
+        this->moves.push_back({0, -1});
+        this->moves.push_back({1, -1});
+        this->moves.push_back({-1, -1});
     }
     else
     {
         sprite = LoadTexture("Sprites\\black_pawn.png");
-        this->allowedmoves.push_back({0, 1});
-        this->allowedmoves.push_back({1, 1});
-        this->allowedmoves.push_back({-1, 1});
+        this->moves.push_back({0, 1});
+        this->moves.push_back({1, 1});
+        this->moves.push_back({-1, 1});
     }
 }
