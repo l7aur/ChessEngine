@@ -11,11 +11,22 @@ const int PADDING = 5;
 const Color COLORS[2] = {{0, 0, 0, 255}, {216, 202, 176, 255}};
 const Color HIGHLIGHT_AVAILABLE_EMPTY = {0, 255, 0, 200};
 const Color HIGHLIGHT_AVAILABLE_ATTACK = {255, 0, 0, 200};
+const Color HIGHLIGHT_SPECIAL = {0, 0, 255, 200};
 
 enum PLAYER_COLORS
 { // no more than 2
     WHITE_PLAYER,
     BLACK_PLAYER
+};
+
+enum PIECE {
+    DON_T_CARE,
+    KING,
+    QUEEN,
+    BISHOP,
+    ROOK,
+    KNIGHT,
+    PAWN
 };
 
 struct BoardPlace

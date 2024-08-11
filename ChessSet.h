@@ -20,7 +20,6 @@ public:
     ~ChessSet();
 private:
     std::vector<Piece*> pieces;
-
 };
 
 #endif

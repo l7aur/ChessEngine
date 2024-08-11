@@ -4,8 +4,18 @@
 #include "raymath.h"
 
 #include <iostream>
+#include <algorithm>
 
-void highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece);
+std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece);
+std::vector<Vector2> checkSpecialMoves(ChessSet *currentSet, Piece *chosenPiece);
+
+bool find(std::vector<Vector2> v, Vector2 x)
+{
+    for (auto i : v)
+        if (Vector2Equals(i, x))
+            return true;
+    return false;
+}
 
 int main()
 {
@@ -19,6 +29,8 @@ int main()
     Piece *chosenPiece;
     bool pieceSelected = false;
     bool turn = WHITE_PLAYER;
+    std::vector<Vector2> allowedMoves;
+    std::vector<Vector2> specialMoves;
 
     SetTargetFPS(30);
     while (!WindowShouldClose())
@@ -26,15 +38,14 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
         chessBoard->drawChessBoard(COLORS[WHITE_PLAYER], COLORS[BLACK_PLAYER]);
-
         whiteSet->draw();
         blackSet->draw();
         Vector2 mousePostion = GetMousePosition();
         int squareX = mousePostion.x / SQUARE_SIZE;
         int squareY = mousePostion.y / SQUARE_SIZE;
         Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
-            ChessSet *currentSet = (turn) ? blackSet : whiteSet;
-            ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
+        ChessSet *currentSet = (turn) ? blackSet : whiteSet;
+        ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             if (!pieceSelected)
@@ -42,7 +53,8 @@ int main()
             if (chosenPiece != nullptr)
             {
                 chosenPiece->draw(chosenPiece->computeBoardPosition(mousePostion, boardPosition));
-                highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece);
+                allowedMoves = highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece);
+                specialMoves = checkSpecialMoves(currentSet, chosenPiece);
                 pieceSelected = true;
                 chosenPiece->toBeDrawn = false;
             }
@@ -51,15 +63,13 @@ int main()
         }
         if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (!Vector2Equals(boardPosition, chosenPiece->getPosition()) && 
-            nullptr == currentSet->findPieceByPosition(boardPosition))
+            if (nullptr == currentSet->findPieceByPosition(boardPosition) &&
+                (find(allowedMoves, boardPosition) || find(specialMoves, boardPosition)))
             {
-                Piece * p = opposingSet->findPieceByPosition(boardPosition);
-                if(p != nullptr)
+                Piece *p = opposingSet->findPieceByPosition(boardPosition);
+                if (p != nullptr)
                     p->setPosition(LOST_PIECE_POSITION);
-
                 turn = !turn;
-                // chosenPiece->updatePreviousPosition();
                 chosenPiece->setPosition(boardPosition);
             }
             chosenPiece->toBeDrawn = true;
@@ -74,20 +84,57 @@ int main()
     return 0;
 }
 
-void highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
+std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
 {
+    std::vector<Vector2> v;
     for (Vector2 allowedM : chosenPiece->getMoves())
     {
         Vector2 boardPos = Vector2Add(chosenPiece->getPosition(), allowedM);
         Vector2 pixelPos = Vector2Scale(boardPos, SQUARE_SIZE);
         Piece *inTargetPos = opposingSet->findPieceByPosition(boardPos);
         if (inTargetPos != nullptr)
+        {
             DrawRectangle(pixelPos.x, pixelPos.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_ATTACK);
+            v.push_back(boardPos);
+        }
         else
         {
             inTargetPos = currentSet->findPieceByPosition(boardPos);
             if (inTargetPos == nullptr)
+            {
                 DrawRectangle(pixelPos.x, pixelPos.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_EMPTY);
+                v.push_back(boardPos);
+            }
         }
     }
+    return v;
+}
+
+std::vector<Vector2> checkSpecialMoves(ChessSet *currentSet, Piece *chosenPiece)
+{
+    std::vector<Vector2> vect;
+    bool enableSpecial = false;
+    Vector2 position = chosenPiece->getPosition();
+    switch (chosenPiece->getId())
+    {
+    case PIECE::PAWN:
+        if (position.y == 1 || position.y == 6)
+            enableSpecial = true;
+        break;
+    case PIECE::KING:
+        // todo
+        break;
+    default:
+        return vect;
+    }
+    if (enableSpecial) {
+        for (auto move : chosenPiece->getSpecialMoves())
+        {
+            Vector2 v = Vector2Add(chosenPiece->getPosition(), move);
+            vect.push_back(v);
+            v = Vector2Scale(v, SQUARE_SIZE);
+            DrawRectangle(v.x, v.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_SPECIAL);
+        }
+    }
+    return vect;
 }
