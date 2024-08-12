@@ -11,16 +11,16 @@ Pawn::Pawn(Vector2 pos, bool color)
     {
         sprite = LoadTexture("Sprites\\white_pawn.png");
         this->moves.push_back({0, -1});
-        this->moves.push_back({1, -1});
-        this->moves.push_back({-1, -1});
+        this->attackMoves.push_back({1, -1});
+        this->attackMoves.push_back({-1, -1});
         this->specialMoves.push_back({0, -2});
     }
     else
     {
         sprite = LoadTexture("Sprites\\black_pawn.png");
         this->moves.push_back({0, 1});
-        this->moves.push_back({1, 1});
-        this->moves.push_back({-1, 1});
+        this->attackMoves.push_back({1, 1});
+        this->attackMoves.push_back({-1, 1});
         this->specialMoves.push_back({0, 2});
     }
 }

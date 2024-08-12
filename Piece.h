@@ -28,6 +28,7 @@ protected:
     Vector2 position{};
     std::vector<Vector2> moves{};
     std::vector<Vector2> specialMoves{};
+    std::vector<Vector2> attackMoves{};
     PIECE id{DON_T_CARE};
 private:
 };

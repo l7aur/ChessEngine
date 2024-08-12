@@ -15,7 +15,7 @@ int main()
     std::vector<Vector2> allowedMoves;
     std::vector<Vector2> specialMoves;
 
-    SetTargetFPS(30);
+    // SetTargetFPS(30);
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -37,7 +37,7 @@ int main()
             {
                 chosenPiece->draw(chosenPiece->computeBoardPosition(mousePostion, boardPosition));
                 allowedMoves = highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece);
-                specialMoves = checkSpecialMoves(currentSet, chosenPiece);
+                specialMoves = highlightSpecialMoves(currentSet, chosenPiece);
                 pieceSelected = true;
                 chosenPiece->toBeDrawn = false;
             }

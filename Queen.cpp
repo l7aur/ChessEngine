@@ -16,5 +16,6 @@ Queen::Queen(Vector2 pos, bool color)
         this->moves.push_back({static_cast<float>(i), 0});
         this->moves.push_back({static_cast<float>(-i), 0});
     }
+    this->attackMoves = this->moves;
     sprite = (color == WHITE_PLAYER) ? LoadTexture("Sprites\\white_queen.png") : LoadTexture("Sprites\\black_queen.png");
 }
