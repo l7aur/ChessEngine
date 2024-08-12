@@ -2,7 +2,6 @@
 
 int main()
 {
-    const Vector2 LOST_PIECE_POSITION{100, 100};
     InitWindow(WINDOW_SIZE, WINDOW_SIZE, "CHESS ENGINE");
 
     ChessBoard *chessBoard = new ChessBoard(static_cast<float>(WINDOW_SIZE));
@@ -12,10 +11,8 @@ int main()
     Piece *chosenPiece;
     bool pieceSelected = false;
     bool turn = WHITE_PLAYER;
-    std::vector<Vector2> allowedMoves;
-    std::vector<Vector2> specialMoves;
+    std::vector<Vector2> moves;
 
-    // SetTargetFPS(30);
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -23,12 +20,14 @@ int main()
         chessBoard->drawChessBoard(COLORS[WHITE_PLAYER], COLORS[BLACK_PLAYER]);
         whiteSet->draw();
         blackSet->draw();
+
         Vector2 mousePostion = GetMousePosition();
         int squareX = mousePostion.x / SQUARE_SIZE;
         int squareY = mousePostion.y / SQUARE_SIZE;
         Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
         ChessSet *currentSet = (turn) ? blackSet : whiteSet;
         ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
+
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             if (!pieceSelected)
@@ -36,23 +35,27 @@ int main()
             if (chosenPiece != nullptr)
             {
                 chosenPiece->draw(chosenPiece->computeBoardPosition(mousePostion, boardPosition));
-                allowedMoves = highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece);
-                specialMoves = highlightSpecialMoves(currentSet, chosenPiece);
+                moves.clear();
+                VectorAppend(moves, highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece));
+                VectorAppend(moves, highlightSpecialMoves(currentSet, opposingSet, chosenPiece));
+                VectorAppend(moves, highlightAttackMoves(opposingSet, chosenPiece));
                 pieceSelected = true;
                 chosenPiece->toBeDrawn = false;
             }
             else
-                std::cout << "\nNo piece detected!\n";
+                std::cerr << "\nNo piece detected!\n";
         }
         if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (nullptr == currentSet->findPieceByPosition(boardPosition) &&
-                (find(allowedMoves, boardPosition) || find(specialMoves, boardPosition)))
+            if (nullptr == currentSet->findPieceByPosition(boardPosition) && find(moves, boardPosition))
             {
                 Piece *p = opposingSet->findPieceByPosition(boardPosition);
                 if (p != nullptr)
                     p->setPosition(LOST_PIECE_POSITION);
-                turn = !turn;
+                if (disable_turn_mechanic)
+                    turn = WHITE_PLAYER;
+                else
+                    turn = !turn;
                 chosenPiece->setPosition(boardPosition);
             }
             chosenPiece->toBeDrawn = true;

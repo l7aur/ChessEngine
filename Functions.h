@@ -8,8 +8,13 @@
 #include "ChessSet.h"
 #include "raymath.h"
 
+template <class T> void VectorAppend(std::vector<T> & v1, std::vector<T> v2) {
+    v1.insert(v1.end(), v2.begin(), v2.end());
+} 
+
 bool find(std::vector<Vector2> v, Vector2 x)
 {
+    // check if a vector2D is part of an array
     for (auto i : v)
         if (Vector2Equals(i, x))
             return true;
@@ -18,34 +23,20 @@ bool find(std::vector<Vector2> v, Vector2 x)
 
 int convertVectorToDirection(Vector2 v)
 {
+    // normalize vector
     v.x = (v.x > 0) ? 1 : (v.x < 0) ? -1
                                     : 0;
     v.y = (v.y > 0) ? 1 : (v.y < 0) ? -1
                                     : 0;
-    if (v.x == 0 && v.y == -1)
-        return 0; // n
-    if (v.x == 1 && v.y == -1)
-        return 1; // ne
-    if (v.x == 1 && v.y == 0)
-        return 2; // e
-    if (v.x == 1 && v.y == 1)
-        return 3; // se
-    if (v.x == 0 && v.y == 1)
-        return 4; // s
-    if (v.x == -1 && v.y == 1)
-        return 5; // sv
-    if (v.x == -1 && v.y == 0)
-        return 6; // v
-    if (v.x == -1 && v.y == -1)
-        return 7; // nv
-    return -1;
-}
-
-bool isInsideBoard(Vector2 v)
-{
-    if (v.x < 0 || v.y < 0 || v.x > 7 || v.y > 7)
-        return false;
-    return true;
+    return Vector2Equals(v, {0, -1})    ? 0   // N
+           : Vector2Equals(v, {1, -1})  ? 1   // NE
+           : Vector2Equals(v, {1, 0})   ? 2   // E
+           : Vector2Equals(v, {1, 1})   ? 3   // SE
+           : Vector2Equals(v, {0, 1})   ? 4   // S
+           : Vector2Equals(v, {-1, 1})  ? 5   // SV
+           : Vector2Equals(v, {-1, 0})  ? 6   // V
+           : Vector2Equals(v, {-1, -1}) ? 7   // NV
+                                        : -1; // UNDEFINED
 }
 
 std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
@@ -77,7 +68,7 @@ std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *cur
                 continue;
             }
             DrawRectangle(pixelPos.x, pixelPos.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_EMPTY);
-            if (isInsideBoard(boardPos))
+            if (chessBoard->isInside(boardPos))
                 v.push_back(boardPos);
         }
     }
@@ -86,11 +77,12 @@ std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *cur
 
 std::vector<Vector2> highlightAttackMoves(ChessSet *opposingSet, Piece *chosenPiece)
 {
+    //todo
     std::vector<Vector2> vect;
     return vect;
 }
 
-std::vector<Vector2> highlightSpecialMoves(ChessSet *currentSet, Piece *chosenPiece)
+std::vector<Vector2> highlightSpecialMoves(ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
 {
     std::vector<Vector2> vect;
     bool enableSpecial = false;
@@ -111,12 +103,22 @@ std::vector<Vector2> highlightSpecialMoves(ChessSet *currentSet, Piece *chosenPi
     {
         for (auto move : chosenPiece->getSpecialMoves())
         {
-            Vector2 v = Vector2Add(chosenPiece->getPosition(), move);
-            vect.push_back(v);
-            v = Vector2Scale(v, SQUARE_SIZE);
-            DrawRectangle(v.x, v.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_SPECIAL);
+            Vector2 boardPos = Vector2Add(chosenPiece->getPosition(), move);
+            if (currentSet->findPieceByPosition(boardPos) ||
+                opposingSet->findPieceByPosition(boardPos))
+            {
+                enableSpecial = false;
+                break;
+            }
+            vect.push_back(boardPos);
         }
     }
+    if (enableSpecial)
+        for (auto i : vect)
+        {
+            Vector2 v = Vector2Scale(i, SQUARE_SIZE);
+            DrawRectangle(v.x, v.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_SPECIAL);
+        }
     return vect;
 }
 
