@@ -17,6 +17,7 @@ public:
     ChessSet(PLAYER_COLORS color);
     void draw() const;
     Piece * findPieceByPosition(Vector2 place) const;
+    King * getKing() const { return (King*)this->pieces.at(0); }; 
     ~ChessSet();
 private:
     std::vector<Piece*> pieces;

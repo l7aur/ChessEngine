@@ -18,6 +18,7 @@ public:
     inline void setPosition(Vector2 newPos) { this->position = newPos; };
     inline std::vector<Vector2> getMoves() const { return this->moves; };
     inline std::vector<Vector2> getSpecialMoves() const { return this->specialMoves; };
+    inline std::vector<Vector2> getAttackMoves() const { return this->attackMoves; };
     inline PIECE getId() const { return this->id; };
     ~Piece();
 
