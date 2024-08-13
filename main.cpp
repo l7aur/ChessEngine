@@ -21,13 +21,15 @@ int main()
         chessBoard->drawChessBoard(COLORS[WHITE_PLAYER], COLORS[BLACK_PLAYER]);
         whiteSet->draw();
         blackSet->draw();
-        std::cout << moves.size() << '\n';
+
         Vector2 mousePostion = GetMousePosition();
         int squareX = mousePostion.x / SQUARE_SIZE;
         int squareY = mousePostion.y / SQUARE_SIZE;
         Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
         ChessSet *currentSet = (turn) ? blackSet : whiteSet;
         ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
+
+        inCheck = hihglightCheck(currentSet, opposingSet);
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             if (!pieceSelected)
@@ -52,25 +54,13 @@ int main()
                 Piece *p = opposingSet->findPieceByPosition(boardPosition);
                 if (p != nullptr && p->getId() != PIECE::KING)
                     p->setPosition(LOST_PIECE_POSITION);
-                if (disable_turn_mechanic)
-                    turn = WHITE_PLAYER;
-                else
-                    turn = !turn; 
-                if (p == nullptr || p->getId() != PIECE::KING)
+                turn = !turn;
+                if ((p == nullptr || p->getId() != PIECE::KING))
                     chosenPiece->setPosition(boardPosition);
-                // if (!inCheck)
-                    // inCheck = opposingSet->getKing()->checkForCheck(chosenPiece, moves);
             }
             chosenPiece->toBeDrawn = true;
             pieceSelected = false;
         }
-        // if (IsKeyPressed(KEY_Q))
-        //     inCheck = false;
-        // if (inCheck)
-        // {
-        //     std::cout << "H\n";
-        //     opposingSet->getKing()->hihglightCheck();
-        // }
         EndDrawing();
     }
 

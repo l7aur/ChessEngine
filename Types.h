@@ -14,9 +14,6 @@ const Color HIGHLIGHT_AVAILABLE_EMPTY = {0, 255, 0, 200};
 const Color HIGHLIGHT_AVAILABLE_ATTACK = {255, 0, 0, 200};
 const Color HIGHLIGHT_SPECIAL = {0, 0, 255, 200};
 
-//DEBUG RULES
-const int disable_turn_mechanic = 1;
-
 enum PLAYER_COLORS
 {
     // no more than 2

@@ -30,7 +30,7 @@ int convertVectorToDirection(Vector2 v)
 std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
 {
     std::vector<Vector2> v;
-    bool directions[] = {1, 1, 1, 1, 1, 1, 1, 1}; // n, ne, e, se, s, ...
+    bool directions[8] = {1, 1, 1, 1, 1, 1, 1, 1}; // n, ne, e, se, s, ...
     for (Vector2 allowedM : chosenPiece->getMoves())
     {
 
@@ -66,7 +66,7 @@ std::vector<Vector2> highlightAllowedMoves(ChessBoard *chessBoard, ChessSet *cur
 std::vector<Vector2> highlightAttackMoves(ChessBoard *chessBoard, ChessSet *currentSet, ChessSet *opposingSet, Piece *chosenPiece)
 {
     std::vector<Vector2> v;
-    bool directions[] = {1, 1, 1, 1, 1, 1, 1, 1}; // n, ne, e, se, s, ...
+    bool directions[8] = {1, 1, 1, 1, 1, 1, 1, 1}; // n, ne, e, se, s, ...
     for (Vector2 allowedM : chosenPiece->getAttackMoves())
     {
         Vector2 boardPos = Vector2Add(chosenPiece->getPosition(), allowedM);
@@ -136,4 +136,22 @@ std::vector<Vector2> highlightSpecialMoves(ChessSet *currentSet, ChessSet *oppos
             DrawRectangle(v.x, v.y, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_SPECIAL);
         }
     return vect;
+}
+
+bool hihglightCheck(ChessSet *currentSet, ChessSet * opposingSet)
+{
+    Vector2 kingPos = currentSet->getKing()->getPosition();
+    for (auto p : opposingSet->getPieces())
+    {
+        for (auto m : p->getAttackMoves())
+        {
+            Vector2 move = Vector2Add(m, p->getPosition());
+            if (Vector2Equals(move, kingPos))
+            {
+                DrawRectangle(kingPos.x * SQUARE_SIZE, kingPos.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_ATTACK);
+                return true;
+            }
+        }
+    }
+    return false;
 }
