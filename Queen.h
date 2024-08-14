@@ -7,7 +7,7 @@ class Queen : public Piece
 {
 public:
     Queen(Vector2 pos, bool color);
-    ~Queen() { Piece::~Piece(); };
+    ~Queen();
 private:
 };
 

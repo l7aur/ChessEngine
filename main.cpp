@@ -1,71 +1,54 @@
-#include "Functions.h"
+#include "raylib.h"
+#include "Miscellaneous.h"
+#include "ChessBoard.h"
 
 int main()
 {
+
     InitWindow(WINDOW_SIZE, WINDOW_SIZE, "CHESS ENGINE");
 
-    ChessBoard *chessBoard = new ChessBoard(static_cast<float>(WINDOW_SIZE));
-    ChessSet *whiteSet = new ChessSet(WHITE_PLAYER);
-    ChessSet *blackSet = new ChessSet(BLACK_PLAYER);
-
+    ChessBoard *board = new ChessBoard(WINDOW_SIZE);
     Piece *chosenPiece;
     bool pieceSelected = false;
     bool turn = WHITE_PLAYER;
-    std::vector<Vector2> moves;
-    bool inCheck = false;
 
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(BLACK);
-        chessBoard->drawChessBoard(COLORS[WHITE_PLAYER], COLORS[BLACK_PLAYER]);
-        whiteSet->draw();
-        blackSet->draw();
+
+        board->draw(COLORS[0], COLORS[1]);
 
         Vector2 mousePostion = GetMousePosition();
         int squareX = mousePostion.x / SQUARE_SIZE;
         int squareY = mousePostion.y / SQUARE_SIZE;
-        Vector2 boardPosition = {static_cast<float>(squareX), static_cast<float>(squareY)};
-        ChessSet *currentSet = (turn) ? blackSet : whiteSet;
-        ChessSet *opposingSet = (!turn) ? blackSet : whiteSet;
+        Vector2 boardPosition = {static_cast<float>(squareY), static_cast<float>(squareX)};
+        ChessSet *currentSet = (turn) ? board->getBlackSet() : board->getWhiteSet();
+        ChessSet *opposingSet = (!turn) ? board->getBlackSet() : board->getWhiteSet();
 
-        inCheck = hihglightCheck(currentSet, opposingSet);
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             if (!pieceSelected)
-                chosenPiece = currentSet->findPieceByPosition(boardPosition);
+                chosenPiece = currentSet->getPieceByPosition(boardPosition);
             if (chosenPiece != nullptr)
             {
-                chosenPiece->draw(chosenPiece->computeBoardPosition(mousePostion, boardPosition));
-                moves.clear();
-                VectorAppend(moves, highlightAllowedMoves(chessBoard, currentSet, opposingSet, chosenPiece));
-                VectorAppend(moves, highlightSpecialMoves(currentSet, opposingSet, chosenPiece));
-                VectorAppend(moves, highlightAttackMoves(chessBoard, currentSet, opposingSet, chosenPiece));
                 pieceSelected = true;
-                chosenPiece->toBeDrawn = false;
+                chosenPiece->setToBeDrawn();
+                chosenPiece->draw(chosenPiece->getPixelPosition(mousePostion, boardPosition));
+                chosenPiece->unsetToBeDrawn();
             }
-            else
-                std::cerr << "\nNo piece detected!\n";
         }
         if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (nullptr == currentSet->findPieceByPosition(boardPosition) && find(moves, boardPosition))
-            {
-                Piece *p = opposingSet->findPieceByPosition(boardPosition);
-                if (p != nullptr && p->getId() != PIECE::KING)
-                    p->setPosition(LOST_PIECE_POSITION);
-                turn = !turn;
-                if ((p == nullptr || p->getId() != PIECE::KING))
-                    chosenPiece->setPosition(boardPosition);
-            }
-            chosenPiece->toBeDrawn = true;
             pieceSelected = false;
+            board->updatePosition(chosenPiece->getPosition(), boardPosition);
+            chosenPiece->setPosition(boardPosition);
+            chosenPiece->setToBeDrawn();
+            chosenPiece = nullptr;
+            board->printState();
         }
         EndDrawing();
     }
-
-    delete chessBoard;
-    delete whiteSet;
-    delete blackSet;
+    delete board;
     return 0;
 }

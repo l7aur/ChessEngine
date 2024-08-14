@@ -7,7 +7,7 @@ class Bishop : public Piece
 {
 public:
     Bishop(Vector2 pos, bool color);
-    ~Bishop() { Piece::~Piece(); };
+    ~Bishop();
 private:
 };
 

@@ -6,7 +6,7 @@
 class Knight: public Piece {
 public:
     Knight(Vector2 pos, bool color);
-    ~Knight() { Piece::~Piece(); };
+    ~Knight();
 };
 
 #endif

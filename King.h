@@ -6,9 +6,7 @@
 class King: public Piece {
 public:
     King(Vector2 pos, bool color);
-    ~King() { Piece::~Piece(); };
-    // bool hihglightCheck(ChessSet * set) const;
-private:
+    ~King();
 };
 
 #endif

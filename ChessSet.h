@@ -1,27 +1,30 @@
-#ifndef CHESSSET_H
-#define CHESSSET_H
+#ifndef CHESS_SET_H
+#define CHESS_SET_H
 
-#include <vector>
-#include "Types.h"
-#include "Piece.h"
+#include "Miscellaneous.h"
 #include "King.h"
 #include "Queen.h"
 #include "Rook.h"
 #include "Knight.h"
 #include "Bishop.h"
 #include "Pawn.h"
+#include <vector>
 
 class ChessSet
 {
 public:
-    ChessSet(PLAYER_COLORS color);
+    ChessSet(PLAYER_COLORS player);
     void draw() const;
-    Piece * findPieceByPosition(Vector2 place) const;
-    King * getKing() const { return (King*)this->pieces.at(0); }; 
-    inline std::vector<Piece*> getPieces() const { return this->pieces; };
+    std::vector<Piece*> getPieces() const;
+    Piece * getPieceByPosition(Vector2 position) const;
     ~ChessSet();
-private:
-    std::vector<Piece*> pieces;
-};
 
+private:
+    King *king;
+    Queen *queen;
+    Rook *rook[2];
+    Bishop *bishop[2];
+    Knight *knight[2];
+    Pawn *pawn[8];
+};
 #endif

@@ -1,8 +1,7 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef MISCELLANEOUS_H
+#define MISCELLANEOUS_H
 
 #include "raylib.h"
-#include <stdexcept>
 
 const int WINDOW_SIZE = 800;
 const int SQUARE_SIZE = WINDOW_SIZE / 8;
@@ -24,23 +23,31 @@ enum PLAYER_COLORS
 enum PIECE
 {
     DON_T_CARE,
-    KING,
-    QUEEN,
-    BISHOP,
-    ROOK,
-    KNIGHT,
-    PAWN
+    B_KING,
+    B_QUEEN,
+    B_BISHOP,
+    B_ROOK,
+    B_KNIGHT,
+    B_PAWN,
+    W_KING,
+    W_QUEEN,
+    W_BISHOP,
+    W_ROOK,
+    W_KNIGHT,
+    W_PAWN
 };
 
 struct BoardPlace
 {
-    Rectangle position;
-    int color;
+    Rectangle rectangle{};
+    bool rectangleColor;
+    PIECE id;
     BoardPlace()
     {
-        color = 0;
-        position = {0.0f, 0.0f, 0.0f, 0.0f};
-    };
+        rectangle = {0.0f, 0.0f, 0.0f, 0.0f};
+        rectangleColor = 0; 
+        id = PIECE::DON_T_CARE;
+    }
 };
 
 #endif
