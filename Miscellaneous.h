@@ -45,9 +45,12 @@ struct BoardPlace
     BoardPlace()
     {
         rectangle = {0.0f, 0.0f, 0.0f, 0.0f};
-        rectangleColor = 0; 
+        rectangleColor = 0;
         id = PIECE::DON_T_CARE;
     }
 };
+
+bool isInsideBoard(Vector2 v);
+bool isOponent(BoardPlace *place1, BoardPlace *place2);
 
 #endif

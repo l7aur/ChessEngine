@@ -1,7 +1,7 @@
 #ifndef CHESS_SET_H
 #define CHESS_SET_H
 
-#include "Miscellaneous.h"
+#include "Piece.h"
 #include "King.h"
 #include "Queen.h"
 #include "Rook.h"
@@ -14,9 +14,9 @@ class ChessSet
 {
 public:
     ChessSet(PLAYER_COLORS player);
-    void draw() const;
-    std::vector<Piece*> getPieces() const;
-    Piece * getPieceByPosition(Vector2 position) const;
+    void draw();
+    std::vector<Piece *> &getPiecesOnBoard() { return this->piecesOnBoard; };
+    Piece *getPieceByPosition(Vector2 position);
     ~ChessSet();
 
 private:
@@ -26,5 +26,6 @@ private:
     Bishop *bishop[2];
     Knight *knight[2];
     Pawn *pawn[8];
+    std::vector<Piece *> piecesOnBoard;
 };
 #endif

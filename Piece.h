@@ -13,9 +13,9 @@ public:
     Rectangle getPixelPosition() const;
     Rectangle getPixelPosition(Vector2 mouse, Vector2 board) const;
     void draw(Rectangle place) const;
-    std::vector<Vector2> getAttack() const;
-    std::vector<Vector2> getSpecial() const;
-    std::vector<Vector2> getAvailable() const;
+    inline std::vector<Vector2> getAttack() const { return this->attackMoves; };
+    inline std::vector<Vector2> getSpecial() const { return this->specialMoves; };
+    inline std::vector<Vector2> getAvailable() const { return this->allowedMoves; };
     inline void setPosition(Vector2 pos) { this->position = pos; };
     inline void setToBeDrawn() { this->toBeDrawn = true; };
     inline void unsetToBeDrawn() { this->toBeDrawn = false; };

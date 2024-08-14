@@ -1,4 +1,6 @@
 #include "ChessBoard.h"
+#include <fstream>
+std::ofstream file_out("match_history.txt");
 
 ChessBoard::ChessBoard(float size)
 {
@@ -45,33 +47,27 @@ void ChessBoard::draw(Color firstColor, Color secondColor) const
     this->blackSet->draw();
 }
 
-bool ChessBoard::isInside(int i, int j) const
-{
-    if (i < 0 || j < 0 || i > 7 || j > 7)
-        return false;
-    return true;
-}
-
 void ChessBoard::updatePosition(Vector2 oldPos, Vector2 newPos)
 {
     std::swap(this->board[static_cast<int>(oldPos.x)][static_cast<int>(oldPos.y)].id,
               this->board[static_cast<int>(newPos.x)][static_cast<int>(newPos.y)].id);
 }
 
-BoardPlace ChessBoard::at(int i, int j) const
+BoardPlace *ChessBoard::at(int i, int j)
 {
-    i = (i > 7) ? 7 : i;
-    i = (i < 0) ? 0 : i;
-    j = (j > 7) ? 7 : j;
-    j = (j < 0) ? 0 : j;
-    return this->board[i][j];
+    return (!isInsideBoard({static_cast<float>(i), static_cast<float>(j)})) ? NO_WHERE : &board[i][j];
+}
+
+BoardPlace *ChessBoard::at(Vector2 v)
+{
+    return (!isInsideBoard(v)) ? NO_WHERE : &board[static_cast<int>(v.x)][static_cast<int>(v.y)];
 }
 
 void ChessBoard::printState() const
 {
-    std::cout << "START BOARD\n";
-    for (int i = 0; i < 8; i++, std::cout << '\n')
-        for (int j = 0; j < 8; j++, std::cout << std::setw(9))
+    file_out << "START BOARD\n";
+    for (int i = 0; i < 8; i++, file_out << '\n')
+        for (int j = 0; j < 8; j++, file_out << std::setw(9))
         {
             std::string name = (this->board[i][j].id == B_KING)     ? "B_KING"
                                : (this->board[i][j].id == B_QUEEN)  ? "B_QUEEN"
@@ -86,13 +82,14 @@ void ChessBoard::printState() const
                                : (this->board[i][j].id == W_BISHOP) ? "W_BISHOP"
                                : (this->board[i][j].id == W_PAWN)   ? "W_PAWN"
                                                                     : "????????";
-            std::cout << name << ' ';
+            file_out << name << ' ';
         }
-    std::cout << "END BOARD\n";
+    file_out << "END BOARD\n\n";
 }
 
 ChessBoard::~ChessBoard()
 {
     delete this->whiteSet;
     delete this->blackSet;
+    file_out.close();
 }

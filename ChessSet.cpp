@@ -12,43 +12,33 @@ ChessSet::ChessSet(PLAYER_COLORS player)
     this->bishop[0] = new Bishop({firstLine, 2}, player), this->bishop[1] = new Bishop({firstLine, 5}, player);
     for (int i = 0; i < 8; i++)
         this->pawn[i] = new Pawn({secondLine, static_cast<float>(i)}, player);
-}
-
-void ChessSet::draw() const
-{
-    king->draw(king->getPixelPosition());
-    queen->draw(queen->getPixelPosition());
-    rook[0]->draw(rook[0]->getPixelPosition()), rook[1]->draw(rook[1]->getPixelPosition());
-    knight[0]->draw(knight[0]->getPixelPosition()), knight[1]->draw(knight[1]->getPixelPosition());
-    bishop[0]->draw(bishop[0]->getPixelPosition()), bishop[1]->draw(bishop[1]->getPixelPosition());
+    piecesOnBoard.push_back(king);
+    piecesOnBoard.push_back(queen);
+    piecesOnBoard.push_back(rook[0]), piecesOnBoard.push_back(rook[1]);
+    piecesOnBoard.push_back(knight[0]), piecesOnBoard.push_back(knight[1]);
+    piecesOnBoard.push_back(bishop[0]), piecesOnBoard.push_back(bishop[1]);
     for (int i = 0; i < 8; i++)
-        pawn[i]->draw(pawn[i]->getPixelPosition());
+        piecesOnBoard.push_back(pawn[i]);
 }
 
-std::vector<Piece *> ChessSet::getPieces() const
+void ChessSet::draw()
 {
-    std::vector<Piece *> v;
-    v.push_back(king);
-    v.push_back(queen);
-    v.push_back(rook[0]), v.push_back(rook[1]);
-    v.push_back(knight[0]), v.push_back(knight[1]);
-    v.push_back(bishop[0]), v.push_back(bishop[1]);
-    for (int i = 0; i < 8; i++)
-        v.push_back(pawn[i]);
-    return v;
+    for (auto p : this->getPiecesOnBoard())
+        p->draw(p->getPixelPosition());
 }
 
-Piece *ChessSet::getPieceByPosition(Vector2 position) const
+Piece *ChessSet::getPieceByPosition(Vector2 position)
 {
-    std::vector<Piece*> myPieces = this->getPieces();
-    for(auto p: myPieces)
-        if(Vector2Equals(p->getPosition(), position))
+    std::vector<Piece *> myPieces = this->getPiecesOnBoard();
+    for (auto p : myPieces)
+        if (Vector2Equals(p->getPosition(), position))
             return p;
     return nullptr;
 }
 
 ChessSet::~ChessSet()
 {
+    this->piecesOnBoard.clear();
     delete this->king;
     delete this->queen;
     delete this->rook[0], delete this->rook[1];
