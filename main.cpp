@@ -7,7 +7,6 @@ std::vector<Vector2> highlightAvailable(ChessBoard *board, Piece *piece);
 std::vector<Vector2> highlightAttack(ChessBoard *board, Piece *piece);
 std::vector<Vector2> highlightSpecial(ChessBoard *board, Piece *piece);
 void removeOpponentsPiece(ChessBoard *board, Vector2 boardPosition, BoardPlace *desiredPlace, bool turn);
-// std::vector<Vector2> Lee(BoardPlace (*abstractBoard)[8], Vector2 start, Vector2 end, std::vector<Vector2> allowedMoves);
 
 int main()
 {
@@ -290,34 +289,3 @@ void removeOpponentsPiece(ChessBoard *board, Vector2 boardPosition, BoardPlace *
             break;
         }
 }
-
-// std::vector<Vector2> Lee(BoardPlace (*abstractBoard)[8], Vector2 start, Vector2 end, std::vector<Vector2> allowedMoves)
-// {
-//     std::vector<Vector2> v;
-//     std::queue<Vector2> q;
-//     bool taken[8][8];
-//     for (int i = 0; i < 8; i++)
-//         for (int j = 0; j < 8; j++)
-//             taken[i][j] = false;
-//     q.push(start);
-//     while (!q.empty())
-//     {
-//         Vector2 currPos = q.front();
-//         taken[static_cast<int>(currPos.x)][static_cast<int>(currPos.y)] = true;
-//         q.pop();
-//         for (auto m : allowedMoves)
-//         {
-//             Vector2 nextPos = Vector2Add(currPos, m);
-//             int posX = static_cast<int>(nextPos.x);
-//             int posY = static_cast<int>(nextPos.y);
-//             if (isInsideBoard(nextPos) && !taken[posX][posY] && abstractBoard[posX][posY].id == PIECE::DON_T_CARE)
-//             {
-//                 q.push(nextPos);
-//                 v.push_back(nextPos);
-//                 if (Vector2Equals(nextPos, end))
-//                     return v;
-//             }
-//         }
-//     }
-//     return v;
-// }
