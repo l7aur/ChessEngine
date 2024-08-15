@@ -13,8 +13,8 @@ King::King(Vector2 pos, bool color)
     this->allowedMoves.push_back({-1, 0});
     this->allowedMoves.push_back({-1, 1});
     this->allowedMoves.push_back({-1, -1});
-    this->specialMoves.push_back({2, 0});
-    this->specialMoves.push_back({-2, 0});
+    this->specialMoves.push_back({0, -2});
+    this->specialMoves.push_back({0, 3});
     this->attackMoves = this->extremityMoves = this->allowedMoves;
     sprite = (color == WHITE_PLAYER) ? LoadTexture("Sprites\\white_king.png") : LoadTexture("Sprites\\black_king.png");
 }

@@ -7,7 +7,7 @@ std::vector<Vector2> highlightAvailable(ChessBoard *board, Piece *piece);
 std::vector<Vector2> highlightAttack(ChessBoard *board, Piece *piece);
 std::vector<Vector2> highlightSpecial(ChessBoard *board, Piece *piece);
 void removeOpponentsPiece(ChessBoard *board, Vector2 boardPosition, BoardPlace *desiredPlace, bool turn);
-std::vector<Vector2> Lee(BoardPlace (*abstractBoard)[8], Vector2 start, Vector2 end, std::vector<Vector2> allowedMoves);
+// std::vector<Vector2> Lee(BoardPlace (*abstractBoard)[8], Vector2 start, Vector2 end, std::vector<Vector2> allowedMoves);
 
 int main()
 {
@@ -18,6 +18,7 @@ int main()
     bool pieceSelected = false;
     bool turn = WHITE_PLAYER;
     std::vector<Vector2> goToSpots;
+    std::vector<Vector2> goToSpecialSpots;
 
     while (!WindowShouldClose())
     {
@@ -33,6 +34,7 @@ int main()
         ChessSet *currentSet = (!turn) ? board->getWhiteSet() : board->getBlackSet();
         // ChessSet *opposingSet = (turn) ? board->getWhiteSet() : board->getBlackSet();
         PIECE opponentKingID = (turn) ? W_KING : B_KING;
+        PIECE currentKingID = (turn) ? B_KING : W_KING;
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
@@ -47,19 +49,31 @@ int main()
                 goToSpots.clear();
                 goToSpots = highlightAvailable(board, chosenPiece);
                 VectorAppend(goToSpots, highlightAttack(board, chosenPiece));
-                VectorAppend(goToSpots, highlightSpecial(board, chosenPiece));
+                goToSpecialSpots = highlightSpecial(board, chosenPiece);
             }
         }
         if (pieceSelected && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (!Vector2Equals(boardPosition, chosenPiece->getPosition()) && find(goToSpots, boardPosition))
+            if (!Vector2Equals(boardPosition, chosenPiece->getPosition()))
             {
+                bool kingCastle = false;
+                if (!find(goToSpecialSpots, boardPosition))
+                {
+                    if (!find(goToSpots, boardPosition))
+                        goto end;
+                }
+                else
+                    kingCastle = true;
                 BoardPlace *desiredPlace = board->at(boardPosition);
                 if (isOponent(desiredPlace, board->at(chosenPiece->getPosition())) && desiredPlace->id != opponentKingID) // opponent has piece there
                 {
                     removeOpponentsPiece(board, boardPosition, desiredPlace, turn);
                     board->updatePosition(chosenPiece->getPosition(), boardPosition);
                     chosenPiece->setPosition(boardPosition);
+                    if (board->getAbstractBoard()[static_cast<int>(boardPosition.x)][static_cast<int>(boardPosition.y)].id == B_KING ||
+                        board->getAbstractBoard()[static_cast<int>(boardPosition.x)][static_cast<int>(boardPosition.y)].id == W_KING)
+                        ((King *)chosenPiece)->unsetCanCastle();
+
                     turn = !turn;
                 }
                 if (desiredPlace->id == DON_T_CARE)
@@ -67,8 +81,31 @@ int main()
                     board->updatePosition(chosenPiece->getPosition(), boardPosition);
                     chosenPiece->setPosition(boardPosition);
                     turn = !turn;
+                    if (kingCastle && board->getAbstractBoard()[static_cast<int>(boardPosition.x)][static_cast<int>(boardPosition.y)].id == currentKingID)
+                    {
+                        if (!((King *)chosenPiece)->getCanCastle())
+                            goto end;
+                        if (Vector2Equals(boardPosition, {0, 1}) || Vector2Equals(boardPosition, {7, 1})) // left castle
+                        {
+                            Piece *rook = currentSet->getPieceByPosition({boardPosition.x, 0});
+                            board->updatePosition(rook->getPosition(), {boardPosition.x, 2});
+                            rook->setPosition({boardPosition.x, 2});
+                            ((King *)chosenPiece)->unsetCanCastle();
+                        }
+                        if (Vector2Equals(boardPosition, {0, 5}) || Vector2Equals(boardPosition, {7, 5})) // right castle
+                        {
+                            Piece *rook = currentSet->getPieceByPosition({boardPosition.x, 7});
+                            board->updatePosition(rook->getPosition(), {boardPosition.x, 4});
+                            rook->setPosition({boardPosition.x, 4});
+                            ((King *)chosenPiece)->unsetCanCastle();
+                        }
+                    }
+                    if (board->getAbstractBoard()[static_cast<int>(boardPosition.x)][static_cast<int>(boardPosition.y)].id == B_KING ||
+                        board->getAbstractBoard()[static_cast<int>(boardPosition.x)][static_cast<int>(boardPosition.y)].id == W_KING)
+                        ((King *)chosenPiece)->unsetCanCastle();
                 }
             }
+        end:
             chosenPiece->setToBeDrawn();
             pieceSelected = false;
             chosenPiece = nullptr;
@@ -155,52 +192,89 @@ std::vector<Vector2> highlightAttack(ChessBoard *board, Piece *piece)
 std::vector<Vector2> highlightSpecial(ChessBoard *board, Piece *piece)
 {
     std::vector<Vector2> v;
-    //     bool enableSpecial = false;
-    //     int posX = static_cast<int>(piece->getPosition().x);
-    //     int posY = static_cast<int>(piece->getPosition().y);
-    //     BoardPlace(*abstractBoard)[8] = board->getAbstractBoard();
-    //     switch (abstractBoard[posX][posY].id)
-    //     {
-    //     case PIECE::B_PAWN:
-    //         if (posX == 1)
-    //             enableSpecial = true;
-    //         break;
-    //     case PIECE::W_PAWN:
-    //         if (posX == 6)
-    //             enableSpecial = true;
-    //         break;
-    //     case PIECE::B_KING:
-    //         if (posX == 0 && posY == 3)
-    //             enableSpecial = true;
-    //         break;
-    //     case PIECE::W_KING:
-    //         if (posX == 7 && posY == 3)
-    //             enableSpecial = true;
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    //     if (enableSpecial)
-    //         for (auto m : piece->getSpecial())
-    //         {
-    //             Vector2 newPos = Vector2Add(piece->getPosition(), m);
-    //             posX = static_cast<int>(newPos.x);
-    //             posY = static_cast<int>(newPos.y);
-    //             if (abstractBoard[posX][posY].id != DON_T_CARE)
-    //             {
-    //                 enableSpecial = false;
-    //                 break;
-    //             }
-    // }
+    bool enableSpecial = false;
+    int posX = static_cast<int>(piece->getPosition().x);
+    int posY = static_cast<int>(piece->getPosition().y);
+    BoardPlace(*abstractBoard)[8] = board->getAbstractBoard();
+    switch (abstractBoard[posX][posY].id)
+    {
+    case PIECE::B_PAWN:
+        if (posX == 1)
+            enableSpecial = true;
+        break;
+    case PIECE::W_PAWN:
+        if (posX == 6)
+            enableSpecial = true;
+        break;
+    case PIECE::B_KING:
+        if (posX == 0 && posY == 3 && (abstractBoard[0][0].id == B_ROOK || abstractBoard[0][7].id == B_ROOK))
+            enableSpecial = true;
+        break;
+    case PIECE::W_KING:
+        if (posX == 7 && posY == 3 && (abstractBoard[7][0].id == W_ROOK || abstractBoard[7][7].id == W_ROOK))
+            enableSpecial = true;
+        break;
+    default:
+        break;
+    }
 
-    //     if (enableSpecial)
-    //         for (auto m : piece->getSpecial())
-    //         {
-    //             Vector2 newPos = Vector2Add(piece->getPosition(), m);
-    //             posX = static_cast<int>(newPos.x);
-    //             posY = static_cast<int>(newPos.y);
-    //             DrawRectangle(posY * SQUARE_SIZE, posX * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_SPECIAL);
-    //         }
+    if (enableSpecial)
+    {
+        if (abstractBoard[posX][posY].id == B_PAWN || abstractBoard[posX][posY].id == W_PAWN)
+            for (auto m : piece->getSpecial())
+            {
+                Vector2 newPos = Vector2Add(piece->getPosition(), m);
+                posX = static_cast<int>(newPos.x);
+                posY = static_cast<int>(newPos.y);
+                if (abstractBoard[posX][posY].id != DON_T_CARE)
+                {
+                    v.clear();
+                    enableSpecial = false;
+                    break;
+                }
+                v.push_back(newPos);
+            }
+        if (abstractBoard[posX][posY].id == B_KING || abstractBoard[posX][posY].id == W_KING)
+        {
+            King *k = (King *)piece;
+            if (k->getCanCastle())
+            {
+                for (int i = 1; i <= 2; i++) // castle to left
+                {
+                    Vector2 newPos = Vector2Add(k->getPosition(), {0, static_cast<float>(-i)});
+                    if (abstractBoard[static_cast<int>(newPos.x)][static_cast<int>(newPos.y)].id != DON_T_CARE)
+                    {
+                        enableSpecial = false;
+                        break;
+                    }
+                }
+                if (enableSpecial)
+                    v.push_back(Vector2Add(k->getPosition(), {0, -2}));
+                enableSpecial = true;
+                for (int i = 1; i <= 3; i++) // castle to right
+                {
+                    Vector2 newPos = Vector2Add(k->getPosition(), {0, static_cast<float>(i)});
+                    if (abstractBoard[static_cast<int>(newPos.x)][static_cast<int>(newPos.y)].id != DON_T_CARE)
+                    {
+                        enableSpecial = false;
+                        break;
+                    }
+                }
+                if (enableSpecial)
+                    v.push_back(Vector2Add(k->getPosition(), {0, 2}));
+                if (v.size())
+                    enableSpecial = true;
+            }
+        }
+    }
+
+    if (enableSpecial)
+        for (auto m : v)
+        {
+            posX = static_cast<int>(m.x);
+            posY = static_cast<int>(m.y);
+            DrawRectangle(posY * SQUARE_SIZE, posX * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_SPECIAL);
+        }
     return v;
 }
 
@@ -217,33 +291,33 @@ void removeOpponentsPiece(ChessBoard *board, Vector2 boardPosition, BoardPlace *
         }
 }
 
-std::vector<Vector2> Lee(BoardPlace (*abstractBoard)[8], Vector2 start, Vector2 end, std::vector<Vector2> allowedMoves)
-{
-    std::vector<Vector2> v;
-    std::queue<Vector2> q;
-    bool taken[8][8];
-    for (int i = 0; i < 8; i++)
-        for (int j = 0; j < 8; j++)
-            taken[i][j] = false;
-    q.push(start);
-    while (!q.empty())
-    {
-        Vector2 currPos = q.front();
-        taken[static_cast<int>(currPos.x)][static_cast<int>(currPos.y)] = true;
-        q.pop();
-        for (auto m : allowedMoves)
-        {
-            Vector2 nextPos = Vector2Add(currPos, m);
-            int posX = static_cast<int>(nextPos.x);
-            int posY = static_cast<int>(nextPos.y);
-            if (isInsideBoard(nextPos) && !taken[posX][posY] && abstractBoard[posX][posY].id == PIECE::DON_T_CARE)
-            {
-                q.push(nextPos);
-                v.push_back(nextPos);
-                if (Vector2Equals(nextPos, end))
-                    return v;
-            }
-        }
-    }
-    return v;
-}
+// std::vector<Vector2> Lee(BoardPlace (*abstractBoard)[8], Vector2 start, Vector2 end, std::vector<Vector2> allowedMoves)
+// {
+//     std::vector<Vector2> v;
+//     std::queue<Vector2> q;
+//     bool taken[8][8];
+//     for (int i = 0; i < 8; i++)
+//         for (int j = 0; j < 8; j++)
+//             taken[i][j] = false;
+//     q.push(start);
+//     while (!q.empty())
+//     {
+//         Vector2 currPos = q.front();
+//         taken[static_cast<int>(currPos.x)][static_cast<int>(currPos.y)] = true;
+//         q.pop();
+//         for (auto m : allowedMoves)
+//         {
+//             Vector2 nextPos = Vector2Add(currPos, m);
+//             int posX = static_cast<int>(nextPos.x);
+//             int posY = static_cast<int>(nextPos.y);
+//             if (isInsideBoard(nextPos) && !taken[posX][posY] && abstractBoard[posX][posY].id == PIECE::DON_T_CARE)
+//             {
+//                 q.push(nextPos);
+//                 v.push_back(nextPos);
+//                 if (Vector2Equals(nextPos, end))
+//                     return v;
+//             }
+//         }
+//     }
+//     return v;
+// }
