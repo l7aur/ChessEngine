@@ -3,6 +3,6 @@
 ## todos
 
 - castle, en-passant special move
-- allowed/attack moves stop when reach a piece
+- implement highlight special moves
 - check mechanic
 - end condition
