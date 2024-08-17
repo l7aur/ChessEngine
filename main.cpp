@@ -36,7 +36,7 @@ int main()
         bool currentKingInCheck = getCheckState(board, opposingSet, (turn) ? blackKing : whiteKing);
         if (currentKingInCheck)
             DrawRectangle(((turn) ? blackKing : whiteKing)->getPosition().y * SQUARE_SIZE,
-                          ((turn) ? blackKing : whiteKing)->getPosition().x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_AVAILABLE_ATTACK);
+                          ((turn) ? blackKing : whiteKing)->getPosition().x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, HIGHLIGHT_CHECK);
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             if (!pieceSelected)
