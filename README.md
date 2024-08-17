@@ -3,7 +3,6 @@
 ## todos
 
 - refactor code
-- en-passant special move
-- implement highlight special moves
+- en-passant special move, implement its highlight
 - check mechanic
 - end condition
