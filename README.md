@@ -1,6 +1,32 @@
 # Chess Engine
 
-## todos
+## Table of contents
+
+- [Preview](#preview)
+- [Description](#description)
+- [Player Controls](#player-controls)
+- [How To Play](#how-to-play)
+- [Resources](#resources)
+- [Further-Developments](#further-developments)
+
+### Preview
+
+*video*
+
+### Description
+
+### Player Controls
+
+### How To Play
+
+### Resources
+
+The game assets and/or sprites were either provided by the course as resources or downloaded from the web - [itch.io](https://itch.io/game-assets).
+
+- [Asset 1](https://greenpixels.itch.io/pixel-art-asset-2)
+- [Asset 2]()
+
+### Further Developments
 
 - refactor code
 - en-passant special move, implement its highlight
