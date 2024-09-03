@@ -16,7 +16,7 @@ https://github.com/user-attachments/assets/0318b915-2fbc-4c73-9402-35a39b13d3d9
 
 ### Description
 
-Chess Engine
+Just a chess engine.
 
 ### Player Controls
 
