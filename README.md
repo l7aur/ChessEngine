@@ -29,7 +29,9 @@ The game logic keeps track of whose turn it is (black/white) and highlights the 
 
 ### How To Play
 
-Run the *main.cpp* file in the workspace. A pop-up window should appear.
+Download the *main.exe* file and the *Sprites* folder. Place them in the same directory.
+
+Run the *main.exe* file. A pop-up window should appear.
 
 ### Resources
 
